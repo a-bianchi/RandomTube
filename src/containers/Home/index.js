@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Col, Row, CardDeck, Button } from 'reactstrap';
 import he from 'he';
 import { getRandomVideos, getMocksVideos } from '../../api';
@@ -21,36 +21,29 @@ const convertResponse = ({ items }) => {
   });
 }
 
+const Home = () => {
+  const [response, setResponse] = useState([]);
 
-class Home extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { response: [] };
-  }
-  
-  random = async () =>{
+  const random = async () =>{
     try{
-      //const { data } = await getRandomVideos();
-      const data = getMocksVideos();
-      this.setState({ response: convertResponse(data) });
+      const { data } = await getRandomVideos();
+      //const data = getMocksVideos();
+      setResponse(convertResponse(data));
     } catch(error) {
       console.log(error);
     }
   }
 
-  componentDidMount(){
-    this.random();
-  }
-  
-  render() {
-    const { response } = this.state;
-    return (
-      <Container>
+  useEffect(() => {
+    random();
+  }, []);
+
+  return (
+    <Container>
         <Header />
         <br/>
         <Row className="justify-content-end">        
-            <Button onClick={this.random} color="warning">Randomizer!</Button>
+            <Button onClick={random} color="warning">Randomizer!</Button>
         </Row>
         <br/>
         <Row>
@@ -70,8 +63,7 @@ class Home extends Component {
         <hr/>
         <Footer />
       </Container>
-    );
-  }
+  );
 }
 
 export default Home;
